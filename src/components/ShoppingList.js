@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import InsertForm from "./InsertForm";
+import axios from "axios";
 
-export default function ShoppingList() {
-  // Fake data
-  const [items, setItems] = useState([
-    { id: 1, text: "Pão" },
-    { id: 2, text: "Salsicha" },
-    { id: 3, text: "Ketchup" },
-  ]);
-
+export default function ShoppingList() { 
+  const [items, setItems] = useState([]);
   useEffect(loadItems, []);
 
   function loadItems() {
-    // Get items from back-end and update state
+    // Get items from back-end and update state    
+    const request = axios.get("http://localhost:4000/items");
+
+    request.then((resp) => {
+      console.log(resp.data)
+      setItems(resp.data);
+    });
+
+    request.catch((error) => {
+      console.log(error);
+      alert("Ocorreu um erro ao buscar sua lista de compras, tente novamente");
+    });
   }
 
   return (
@@ -21,7 +27,7 @@ export default function ShoppingList() {
       <InsertForm onAddItem={loadItems} />
       <List>
         {items.map((item) => (
-          <li key={item.id}>{item.text}</li>
+          <li key={item.id}>{item.item}</li>
         ))}
       </List>
     </>
